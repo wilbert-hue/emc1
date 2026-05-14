@@ -204,7 +204,7 @@ export default function DashboardPage() {
                 Coherent Dashboard
               </h1>
               <h2 className="text-sm text-black">
-                {dashboardName || 'Europe High Speed Data Acquisition (DAQ) Market'}
+                {dashboardName || 'Europe High Speed Data Acquisition (DAQ)  Market'}
               </h2>
             </div>
           </div>
@@ -212,8 +212,15 @@ export default function DashboardPage() {
         </div>
 
         {/* Global KPI Cards */}
-        <div className="mb-6">
+        <div className="mb-6 space-y-3">
           <GlobalKPICards />
+          <div
+            role="alert"
+            className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          >
+            <span className="font-semibold">NOTE:</span>{' '}
+            All the data in the dashboard is demo data. No real-world data is related to this.
+          </div>
         </div>
 
 
