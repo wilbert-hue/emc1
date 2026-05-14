@@ -15,6 +15,7 @@ import { CompetitiveIntelligence } from '@/components/charts/CompetitiveIntellig
 import CustomerIntelligenceHeatmap from '@/components/charts/CustomerIntelligenceHeatmap'
 import DistributorsIntelligence from '@/components/charts/DistributorsIntelligenceTable'
 import CustomerIntelligenceDatabase from '@/components/charts/CustomerIntelligenceDatabase'
+import { CustomerDatabasePropositions } from '@/components/charts/CustomerDatabasePropositions'
 import { InsightsPanel } from '@/components/InsightsPanel'
 import { FilterPresets } from '@/components/filters/FilterPresets'
 import { ChartGroupSelector } from '@/components/filters/ChartGroupSelector'
@@ -31,7 +32,18 @@ export default function DashboardPage() {
   const { setData, setLoading, setError, data, isLoading, error, filters, selectedChartGroup, dashboardName } = useDashboardStore()
   const [mounted, setMounted] = useState(false)
   const [hasCheckedStore, setHasCheckedStore] = useState(false)
-  const [activeTab, setActiveTab] = useState<'bar' | 'line' | 'heatmap' | 'table' | 'waterfall' | 'bubble' | 'competitive-intelligence' | 'customer-intelligence' | 'customer-intelligence-database'>('bar')
+  const [activeTab, setActiveTab] = useState<
+    | 'bar'
+    | 'line'
+    | 'heatmap'
+    | 'table'
+    | 'waterfall'
+    | 'bubble'
+    | 'competitive-intelligence'
+    | 'customer-intelligence'
+    | 'customer-intelligence-database'
+    | 'customer-database-propositions'
+  >('bar')
   const [showInsights, setShowInsights] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [viewMode, setViewMode] = useState<'tabs' | 'vertical'>('tabs')
@@ -55,7 +67,8 @@ export default function DashboardPage() {
     'bubble': 'bubble',
     'competitive-intelligence': 'competitive-intelligence',
     'customer-intelligence': 'customer-intelligence',
-    'customer-intelligence-database': 'customer-intelligence-database'
+    'customer-intelligence-database': 'customer-intelligence-database',
+    'customer-database-propositions': 'customer-database-propositions',
   }
 
   // Auto-switch to first available tab when chart group changes
@@ -381,6 +394,18 @@ export default function DashboardPage() {
                             🫧 Bubble Chart
                           </button>
                         )}
+                        {isChartVisible('customer-database-propositions') && (
+                          <button
+                            onClick={() => setActiveTab('customer-database-propositions')}
+                            className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                              activeTab === 'customer-database-propositions'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-black hover:text-black hover:border-gray-300'
+                            }`}
+                          >
+                            👥 Customer Intelligence
+                          </button>
+                        )}
                         {isChartVisible('customer-intelligence') && (
                           <button
                             onClick={() => setActiveTab('customer-intelligence')}
@@ -495,6 +520,12 @@ export default function DashboardPage() {
                       </div>
                     )}
                     
+                    {activeTab === 'customer-database-propositions' && (
+                      <div id="customer-database-propositions">
+                        <CustomerDatabasePropositions />
+                      </div>
+                    )}
+
                     {activeTab === 'customer-intelligence' && (
                       <div id="customer-intelligence-chart" className="space-y-8">
                         <div>
@@ -580,6 +611,13 @@ export default function DashboardPage() {
                           title="Coherent Opportunity Matrix" 
                           height={450}
                         />
+                      </div>
+                    )}
+
+                    {isChartVisible('customer-database-propositions') && (
+                      <div className="border-b pb-8">
+                        <h3 className="text-lg font-semibold text-black mb-4">👥 Customer Intelligence</h3>
+                        <CustomerDatabasePropositions />
                       </div>
                     )}
                     
