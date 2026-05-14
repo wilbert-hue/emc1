@@ -1,63 +1,46 @@
 {
-  "Global": {
-    "By Type": {
-      "Sub-Normothermic Perfusion (20–34°C)": {},
-      "Warm or Normothermic Perfusion (35–37°C)": {}
-    },
-    "By Organ Type": {
-      "Liver": {},
-      "Heart": {},
-      "Lung": {},
-      "Kidney": {},
-      "Others (Pancreas, Small bowel / Intestine, Composite Tissues / Limb Perfusion (emerging use cases))": {}
-    },
-    "Application / Use Case": {
-      "Organ Preservation": {},
-      "Viability Assessment": {},
-      "Physiologic Transport": {},
-      "Reconditioning Marginal Organs": {},
-      "Others (Research Use / Protocol development)": {}
-    },
-    "By End User": {
-      "Hospitals & Clinics": {},
-      "Specialty Clinic/Centers": {},
-      "Transplant Centers": {},
-      "Others (Research Institutes/Centers, Organ Procurement Organizations, etc.)": {}
-    },
+  "Europe": {
     "By Region": {
-      "North America": {
-        "U.S.": {},
-        "Canada": {}
-      },
       "Europe": {
         "U.K.": {},
-        "Germany": {},
-        "Italy": {},
         "France": {},
         "Spain": {},
+        "Italy": {},
         "Russia": {},
+        "Slovenia": {},
+        "Netherlands": {},
+        "Sweden": {},
         "Rest of Europe": {}
-      },
-      "Asia Pacific": {
-        "China": {},
-        "India": {},
-        "Japan": {},
-        "South Korea": {},
-        "ASEAN": {},
-        "Australia": {},
-        "Rest of Asia Pacific": {}
-      },
-      "Latin America": {
-        "Brazil": {},
-        "Argentina": {},
-        "Mexico": {},
-        "Rest of Latin America": {}
-      },
-      "Middle East & Africa": {
-        "GCC": {},
-        "South Africa": {},
-        "Rest of Middle East & Africa": {}
       }
+    },
+    "By Sampling Speed": {
+      "Below 10 MS/s (Mid-Speed DAQ)": {},
+      "10–100 MS/s (High-Speed DAQ)": {},
+      "101 MS/s – 1 GS/s (Ultra-High-Speed DAQ)": {},
+      "Above 1 GS/s (Extreme High-Speed DAQ)": {}
+    },
+    "By System Form Factor": {
+      "Fixed / Installed Systems": {},
+      "Portable / Mobile Systems": {}
+    },
+    "By Signal Type Configuration": {
+      "Analog-Only DAQ Systems": {},
+      "Digital-Only DAQ Systems": {},
+      "Mixed-Signal DAQ Systems (Analog + Digital)": {}
+    },
+    "By End User": {
+      "Scientific Research Institutions": {},
+      "Telecommunications & Networking Companies": {},
+      "Aerospace & Defense Organizations": {},
+      "Industrial Manufacturing Enterprises": {},
+      "Energy & Power Sector Entities": {},
+      "Automotive & Transportation Companies": {},
+      "Healthcare & Medical Device Manufacturers": {}
+    },
+    "By Deployment": {
+      "Laboratory": {},
+      "Industrial Floor": {},
+      "Field / Outdoor": {}
     }
   }
 }

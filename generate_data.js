@@ -4,103 +4,100 @@ const path = require('path');
 // Years: 2021-2033
 const years = [2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
 
-// Geographies with their region grouping
+// Europe only — countries match geographical hierarchy (image 3)
 const regions = {
-  "North America": ["U.S.", "Canada"],
-  "Europe": ["U.K.", "Germany", "Italy", "France", "Spain", "Russia", "Rest of Europe"],
-  "Asia Pacific": ["China", "India", "Japan", "South Korea", "ASEAN", "Australia", "Rest of Asia Pacific"],
-  "Latin America": ["Brazil", "Argentina", "Mexico", "Rest of Latin America"],
-  "Middle East & Africa": ["GCC", "South Africa", "Rest of Middle East & Africa"]
+  Europe: ['U.K.', 'France', 'Spain', 'Italy', 'Russia', 'Slovenia', 'Netherlands', 'Sweden', 'Rest of Europe'],
 };
 
-// New segment definitions with market share splits (proportions within each segment type)
+// Segment types (order preserved: "By Type" → By Sampling Speed first for quick filters / defaults)
 const segmentTypes = {
-  "By Type": {
-    "Sub-Normothermic Perfusion (20–34°C)": 0.55,
-    "Warm or Normothermic Perfusion (35–37°C)": 0.45
+  'By Sampling Speed': {
+    'Below 10 MS/s (Mid-Speed DAQ)': 0.28,
+    '10–100 MS/s (High-Speed DAQ)': 0.26,
+    '101 MS/s – 1 GS/s (Ultra-High-Speed DAQ)': 0.22,
+    'Above 1 GS/s (Extreme High-Speed DAQ)': 0.24,
   },
-  "By Organ Type": {
-    "Liver": 0.35,
-    "Heart": 0.22,
-    "Lung": 0.18,
-    "Kidney": 0.15,
-    "Others (Pancreas, Small bowel / Intestine, Composite Tissues / Limb Perfusion (emerging use cases))": 0.10
+  'By System Form Factor': {
+    'Fixed / Installed Systems': 0.62,
+    'Portable / Mobile Systems': 0.38,
   },
-  "Application / Use Case": {
-    "Organ Preservation": 0.30,
-    "Viability Assessment": 0.25,
-    "Physiologic Transport": 0.20,
-    "Reconditioning Marginal Organs": 0.15,
-    "Others (Research Use / Protocol development)": 0.10
+  'By Signal Type Configuration': {
+    'Analog-Only DAQ Systems': 0.34,
+    'Digital-Only DAQ Systems': 0.28,
+    'Mixed-Signal DAQ Systems (Analog + Digital)': 0.38,
   },
-  "By End User": {
-    "Hospitals & Clinics": 0.40,
-    "Specialty Clinic/Centers": 0.25,
-    "Transplant Centers": 0.25,
-    "Others (Research Institutes/Centers, Organ Procurement Organizations, etc.)": 0.10
-  }
+  'By End User': {
+    'Scientific Research Institutions': 0.18,
+    'Telecommunications & Networking Companies': 0.14,
+    'Aerospace & Defense Organizations': 0.12,
+    'Industrial Manufacturing Enterprises': 0.22,
+    'Energy & Power Sector Entities': 0.12,
+    'Automotive & Transportation Companies': 0.12,
+    'Healthcare & Medical Device Manufacturers': 0.1,
+  },
+  'By Deployment': {
+    Laboratory: 0.42,
+    'Industrial Floor': 0.35,
+    'Field / Outdoor': 0.23,
+  },
 };
 
-// Regional base values (USD Million) for 2021 - total market per region
-// Global Normothermic Machine Perfusion market ~$300M in 2021, growing ~12% CAGR
 const regionBaseValues = {
-  "North America": 120,
-  "Europe": 90,
-  "Asia Pacific": 50,
-  "Latin America": 20,
-  "Middle East & Africa": 15
+  Europe: 420,
 };
 
-// Country share within region (must sum to ~1.0)
 const countryShares = {
-  "North America": { "U.S.": 0.82, "Canada": 0.18 },
-  "Europe": { "U.K.": 0.18, "Germany": 0.22, "Italy": 0.12, "France": 0.16, "Spain": 0.10, "Russia": 0.08, "Rest of Europe": 0.14 },
-  "Asia Pacific": { "China": 0.28, "India": 0.12, "Japan": 0.25, "South Korea": 0.12, "ASEAN": 0.10, "Australia": 0.07, "Rest of Asia Pacific": 0.06 },
-  "Latin America": { "Brazil": 0.45, "Argentina": 0.15, "Mexico": 0.25, "Rest of Latin America": 0.15 },
-  "Middle East & Africa": { "GCC": 0.45, "South Africa": 0.25, "Rest of Middle East & Africa": 0.30 }
+  Europe: {
+    'U.K.': 0.14,
+    France: 0.14,
+    Spain: 0.11,
+    Italy: 0.12,
+    Russia: 0.13,
+    Slovenia: 0.04,
+    Netherlands: 0.1,
+    Sweden: 0.08,
+    'Rest of Europe': 0.14,
+  },
 };
 
-// Growth rates (CAGR) per region - slightly different for variety
 const regionGrowthRates = {
-  "North America": 0.115,
-  "Europe": 0.108,
-  "Asia Pacific": 0.145,
-  "Latin America": 0.125,
-  "Middle East & Africa": 0.118
+  Europe: 0.112,
 };
 
-// Segment-specific growth multipliers (relative to regional base CAGR)
 const segmentGrowthMultipliers = {
-  "By Type": {
-    "Sub-Normothermic Perfusion (20–34°C)": 0.95,
-    "Warm or Normothermic Perfusion (35–37°C)": 1.07
+  'By Sampling Speed': {
+    'Below 10 MS/s (Mid-Speed DAQ)': 0.96,
+    '10–100 MS/s (High-Speed DAQ)': 1.02,
+    '101 MS/s – 1 GS/s (Ultra-High-Speed DAQ)': 1.08,
+    'Above 1 GS/s (Extreme High-Speed DAQ)': 1.12,
   },
-  "By Organ Type": {
-    "Liver": 1.08,
-    "Heart": 1.05,
-    "Lung": 1.12,
-    "Kidney": 0.95,
-    "Others (Pancreas, Small bowel / Intestine, Composite Tissues / Limb Perfusion (emerging use cases))": 1.20
+  'By System Form Factor': {
+    'Fixed / Installed Systems': 0.99,
+    'Portable / Mobile Systems': 1.14,
   },
-  "Application / Use Case": {
-    "Organ Preservation": 0.92,
-    "Viability Assessment": 1.15,
-    "Physiologic Transport": 1.05,
-    "Reconditioning Marginal Organs": 1.18,
-    "Others (Research Use / Protocol development)": 1.10
+  'By Signal Type Configuration': {
+    'Analog-Only DAQ Systems': 0.97,
+    'Digital-Only DAQ Systems': 1.1,
+    'Mixed-Signal DAQ Systems (Analog + Digital)': 1.05,
   },
-  "By End User": {
-    "Hospitals & Clinics": 0.98,
-    "Specialty Clinic/Centers": 1.10,
-    "Transplant Centers": 1.08,
-    "Others (Research Institutes/Centers, Organ Procurement Organizations, etc.)": 1.05
-  }
+  'By End User': {
+    'Scientific Research Institutions': 1.06,
+    'Telecommunications & Networking Companies': 1.1,
+    'Aerospace & Defense Organizations': 1.04,
+    'Industrial Manufacturing Enterprises': 1.0,
+    'Energy & Power Sector Entities': 1.12,
+    'Automotive & Transportation Companies': 1.08,
+    'Healthcare & Medical Device Manufacturers': 1.03,
+  },
+  'By Deployment': {
+    Laboratory: 0.98,
+    'Industrial Floor': 1.04,
+    'Field / Outdoor': 1.1,
+  },
 };
 
-// Volume multiplier: units per USD Million (rough: ~500 units per $1M for perfusion devices)
-const volumePerMillionUSD = 480;
+const volumePerMillionUSD = 52;
 
-// Seeded pseudo-random for reproducibility
 let seed = 42;
 function seededRandom() {
   seed = (seed * 16807 + 0) % 2147483647;
@@ -129,17 +126,43 @@ function generateTimeSeries(baseValue, growthRate, roundFn) {
   return series;
 }
 
+function emptyLeavesForSegmentType(segType) {
+  const out = {};
+  for (const name of Object.keys(segmentTypes[segType])) {
+    out[name] = {};
+  }
+  return out;
+}
+
+function buildSegmentationAnalysis() {
+  const europeCountries = regions.Europe;
+  const byRegionEurope = {};
+  europeCountries.forEach((c) => {
+    byRegionEurope[c] = {};
+  });
+
+  const europeEntry = {
+    'By Region': {
+      Europe: byRegionEurope,
+    },
+  };
+
+  for (const segType of Object.keys(segmentTypes)) {
+    europeEntry[segType] = emptyLeavesForSegmentType(segType);
+  }
+
+  return { Europe: europeEntry };
+}
+
 function generateData(isVolume) {
   const data = {};
   const roundFn = isVolume ? roundToInt : roundTo1;
   const multiplier = isVolume ? volumePerMillionUSD : 1;
 
-  // Generate data for each region and country
   for (const [regionName, countries] of Object.entries(regions)) {
     const regionBase = regionBaseValues[regionName] * multiplier;
     const regionGrowth = regionGrowthRates[regionName];
 
-    // Region-level data
     data[regionName] = {};
     for (const [segType, segments] of Object.entries(segmentTypes)) {
       data[regionName][segType] = {};
@@ -150,18 +173,6 @@ function generateData(isVolume) {
       }
     }
 
-    // Add "By Country" for each region
-    data[regionName]["By Country"] = {};
-    for (const country of countries) {
-      const cShare = countryShares[regionName][country];
-      // Use a slight variation of region growth per country
-      const countryGrowthVariation = 1 + (seededRandom() - 0.5) * 0.06;
-      const countryBase = regionBase * cShare;
-      const countryGrowth = regionGrowth * countryGrowthVariation;
-      data[regionName]["By Country"][country] = generateTimeSeries(countryBase, countryGrowth, roundFn);
-    }
-
-    // Country-level data
     for (const country of countries) {
       const cShare = countryShares[regionName][country];
       const countryBase = regionBase * cShare;
@@ -174,7 +185,6 @@ function generateData(isVolume) {
         for (const [segName, share] of Object.entries(segments)) {
           const segGrowth = countryGrowth * segmentGrowthMultipliers[segType][segName];
           const segBase = countryBase * share;
-          // Add slight country-specific variation to segment share
           const shareVariation = 1 + (seededRandom() - 0.5) * 0.1;
           data[country][segType][segName] = generateTimeSeries(segBase * shareVariation, segGrowth, roundFn);
         }
@@ -185,19 +195,20 @@ function generateData(isVolume) {
   return data;
 }
 
-// Generate both datasets
 seed = 42;
 const valueData = generateData(false);
 seed = 7777;
 const volumeData = generateData(true);
 
-// Write files
 const outDir = path.join(__dirname, 'public', 'data');
 fs.writeFileSync(path.join(outDir, 'value.json'), JSON.stringify(valueData, null, 2));
 fs.writeFileSync(path.join(outDir, 'volume.json'), JSON.stringify(volumeData, null, 2));
+fs.writeFileSync(
+  path.join(outDir, 'segmentation_analysis.json'),
+  JSON.stringify(buildSegmentationAnalysis(), null, 2)
+);
 
-console.log('Generated value.json and volume.json successfully');
-console.log('Value geographies:', Object.keys(valueData).length);
-console.log('Volume geographies:', Object.keys(volumeData).length);
-console.log('Segment types:', Object.keys(valueData['North America']));
-console.log('Sample - North America, By Type:', JSON.stringify(valueData['North America']['By Type'], null, 2));
+console.log('Generated value.json, volume.json, segmentation_analysis.json');
+console.log('Top-level geographies in value:', Object.keys(valueData));
+console.log('Segment types:', Object.keys(valueData.Europe));
+console.log('Sample Europe / By Sampling Speed:', valueData.Europe['By Sampling Speed']);

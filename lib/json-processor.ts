@@ -1283,7 +1283,9 @@ export async function processJsonDataAsync(
             return value && typeof value === 'object' && !Array.isArray(value)
           })
           regions.forEach(region => {
-            if (!regionGeographies.includes(region) && !geographies.includes(region)) {
+            // Always register the region for hierarchy (optgroups), even when the same
+            // name exists as a top-level geography key (e.g. "Europe" aggregate + "Europe" region).
+            if (!regionGeographies.includes(region)) {
               regionGeographies.push(region)
             }
             // Extract countries under each region (second level keys, excluding the region name itself)
@@ -1306,14 +1308,20 @@ export async function processJsonDataAsync(
       }
     }
 
-    // Add regions and countries to geographies list
+    // Add regions and countries to geographies list (avoid duplicates when region name matches a top-level key)
     if (regionGeographies.length > 0) {
       console.log(`Found ${regionGeographies.length} regions from "By Region":`, regionGeographies)
-      geographies = [...geographies, ...regionGeographies]
+      const extraRegions = regionGeographies.filter((r) => !geographies.includes(r))
+      if (extraRegions.length > 0) {
+        geographies = [...geographies, ...extraRegions]
+      }
     }
     if (allCountries.length > 0) {
       console.log(`Found ${allCountries.length} countries from "By Region":`, allCountries)
-      geographies = [...geographies, ...allCountries]
+      const extraCountries = allCountries.filter((c) => !geographies.includes(c))
+      if (extraCountries.length > 0) {
+        geographies = [...geographies, ...extraCountries]
+      }
     }
 
     console.log(`Found ${geographies.length} total geographies:`, geographies)
@@ -1472,9 +1480,9 @@ export async function processJsonDataAsync(
     
     // Build metadata
     const metadata: Metadata = {
-      market_name: 'Normothermic Machine Perfusion Market',
+      market_name: 'High Speed Data Acquisition (DAQ) Systems Market',
       market_type: 'Market Analysis',
-      industry: 'Healthcare & Pharmaceuticals',
+      industry: 'Test & Measurement / Industrial DAQ',
       years: allYears,
       start_year: startYear,
       base_year: baseYear,

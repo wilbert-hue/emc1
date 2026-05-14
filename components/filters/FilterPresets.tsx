@@ -40,28 +40,28 @@ export function FilterPresets() {
   {
     id: 'top-markets',
     name: 'Top Markets',
-        description: 'Top 3 regions by 2023 market size',
+        description: 'Top 3 countries by 2023 market size (current segment type)',
     icon: <Globe className="h-4 w-4" />,
         filters: topMarketFilters
   },
       {
         id: 'growth-leaders',
         name: 'Growth Leaders',
-        description: 'Top 2 regions with highest CAGR',
+        description: 'Top 2 countries with highest CAGR (current segment type)',
         icon: <TrendingUp className="h-4 w-4" />,
         filters: growthLeadersFilters
       },
       {
         id: 'emerging-markets',
         name: 'Emerging Markets',
-        description: 'Top 5 countries with highest CAGR',
+        description: 'Top 5 countries with highest CAGR (current segment type)',
         icon: <Target className="h-4 w-4" />,
         filters: emergingMarketsFilters
       },
   {
     id: 'full-comparison',
     name: 'Full Comparison',
-    description: 'All regions and segments matrix view',
+    description: 'Europe matrix: all geographies and segments',
     icon: <BarChart3 className="h-4 w-4" />,
     filters: {
       viewMode: 'matrix',
